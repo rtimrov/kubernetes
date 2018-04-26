@@ -39,8 +39,19 @@ kubectl exec -it kafka-0 -- bash
 
     kafka-console-consumer.sh --topic test --bootstrap-server localhost:9092
 
-On differnet terminal:
+On different terminal:
 
 kubectl exec -it kafka-1 -- bash
     kafka-console-producer.sh --topic test --broker-list localhost:9092
-    
+
+SSD:
+
+  volumeClaimTemplates:
+  - metadata:
+      name: datadir
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ssd
+      resources:
+        requests:
+          storage: 100Gi    
