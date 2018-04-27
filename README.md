@@ -1,57 +1,14 @@
-brew install kubernetes-helm
+1. Architecture Overview.
+2. Deployment plan.
+	- How much data do we have?
+	- Which level of data security needed?
+	- How fast data will be transferred and processed?
 
-Zookeeper:
+=> Resources needed, infrastructure decision.
 
-kubectl create -f zookeeper.yaml
+Zookeeper (RAM, CPU, SSD)
+Kafka (RAM, CPU, SSD) => expected throughtput (ex: N nodes x 1 node 75M/s = expected).
 
-Kafka:
-
-kubectl create -f kafka.yaml
-
-helm init
-Prometheus:
-
-git clone https://github.com/kubernetes/charts
-cd charts
-
-kubectl create clusterrolebinding tiller-cluster-admin \
-    --clusterrole=cluster-admin \
-    --serviceaccount=kube-system:default
-    
-helm install -f prometheus/values.yaml stable/prometheus --name prometheus
-
-
-
-Grafana:
-    
-helm install --name kube-grafana stable/grafana
-
-    
-Testing:
-
-kubectl exec -it kafka-0 -- bash
-
-    kafka-topics.sh --create \
-    --topic test \
-    --zookeeper zk-0.zk-hs.default.svc.cluster.local:2181,zk-1.zk-hs.default.svc.cluster.local:2181,zk-2.zk-hs.default.svc.cluster.local:2181 \
-    --partitions 3 \
-    --replication-factor 3
-
-    kafka-console-consumer.sh --topic test --bootstrap-server localhost:9092
-
-On different terminal:
-
-kubectl exec -it kafka-1 -- bash
-    kafka-console-producer.sh --topic test --broker-list localhost:9092
-
-SSD:
-
-  volumeClaimTemplates:
-  - metadata:
-      name: datadir
-    spec:
-      accessModes: [ "ReadWriteOnce" ]
-      storageClassName: ssd
-      resources:
-        requests:
-          storage: 100Gi    
+3. Monitoring.
+ 
+ 
