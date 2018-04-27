@@ -77,7 +77,7 @@ spec:
         - "export KAFKA_OPTS='-javaagent:/opt/kafka/jmx_prometheus_javaagent-0.9.jar=7071:/opt/kafka/kafka-0-8-2.yml' && exec kafka-server-start.sh /opt/kafka/config/server.properties --override broker.id=${HOSTNAME##*-} \
           --override listeners=PLAINTEXT://:9092 \
           --override zookeeper.connect=zk-0.zk-hs.default.svc.cluster.local:2181,zk-1.zk-hs.default.svc.cluster.local:2181,zk-2.zk-hs.default.svc.cluster.local:2181 \
-          --override log.dir=/var/lib/kafka \
+          --override log.dirs=/var/lib/kafka/logs \
           --override auto.create.topics.enable=true \
           --override auto.leader.rebalance.enable=true \
           --override background.threads=10 \
@@ -183,6 +183,7 @@ spec:
       name: datadir
     spec:
       accessModes: [ "ReadWriteOnce" ]
+      storageClassName: ssd
       resources:
         requests:
-          storage: 1Gi
+          storage: 2Gi
