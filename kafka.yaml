@@ -47,23 +47,13 @@ spec:
                     operator: In
                     values: 
                     - kafka
+                    - zk
               topologyKey: "kubernetes.io/hostname"
-        podAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-             - weight: 1
-               podAffinityTerm:
-                 labelSelector:
-                    matchExpressions:
-                      - key: "app"
-                        operator: In
-                        values: 
-                        - zk
-                 topologyKey: "kubernetes.io/hostname"
       terminationGracePeriodSeconds: 300
       containers:
       - name: k8skafka
         imagePullPolicy: Always
-        image: hoale/kafka01021
+        image: hoale/kafka_211_110
         resources:
           requests:
             memory: "512Mi"
@@ -136,7 +126,7 @@ spec:
           --override fetch.purgatory.purge.interval.requests=1000 \
           --override group.max.session.timeout.ms=300000 \
           --override group.min.session.timeout.ms=6000 \
-          --override inter.broker.protocol.version=0.10.2-IV0 \
+          --override inter.broker.protocol.version=1.1 \
           --override log.cleaner.backoff.ms=15000 \
           --override log.cleaner.dedupe.buffer.size=134217728 \
           --override log.cleaner.delete.retention.ms=86400000 \
@@ -174,7 +164,17 @@ spec:
            command: 
             - sh 
             - -c 
-            - "/opt/kafka/bin/kafka-broker-api-versions.sh --bootstrap-server=localhost:9092"
+            - "/opt/kafka/bin/kafka-topics.sh --zookeeper=zk-0.zk-hs.default.svc.cluster.local:2181,zk-1.zk-hs.default.svc.cluster.local:2181,zk-2.zk-hs.default.svc.cluster.local:2181 --list"
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
+        livenessProbe:
+          exec:
+           command:
+            - sh
+            - -c
+            - "/opt/kafka/bin/kafka-topics.sh --zookeeper=zk-0.zk-hs.default.svc.cluster.local:2181,zk-1.zk-hs.default.svc.cluster.local:2181,zk-2.zk-hs.default.svc.cluster.local:2181 --list"
+          initialDelaySeconds: 30
+          timeoutSeconds: 5
       securityContext:
         runAsUser: 1000
         fsGroup: 1000

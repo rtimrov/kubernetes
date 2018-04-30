@@ -965,6 +965,7 @@ serverFiles:
             - kafka-0.kafka-svc.default.svc.cluster.local:7071
             - kafka-1.kafka-svc.default.svc.cluster.local:7071
             - kafka-2.kafka-svc.default.svc.cluster.local:7071
+            - burrow-f858975b5-ddnhf:8080
 networkPolicy:
   ## Enable creation of NetworkPolicy resources.
   ##
